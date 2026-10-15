@@ -1,0 +1,234 @@
+/* =========================================================
+   BIOS theme: loaded after style.css, overrides it.
+   Black carbon + MSI-style red, chamfered panels, segmented bars.
+   Delete the <link> to bios-theme.css to revert.
+   ========================================================= */
+
+:root {
+    --bios-red: #e60012;
+    --bios-red-hot: #ff2438;
+    --bios-black: #08080a;
+    --bios-panel: #131316;
+    --bios-panel-2: #1a1a1e;
+    --bios-line: #2b2b31;
+    --bios-text: #f2f2f4;
+    --bios-dim: #8b8b94;
+    --cut: 14px;
+
+    --background: var(--bios-black);
+    --card: var(--bios-panel);
+    --border: var(--bios-line);
+    --text: var(--bios-text);
+    --muted: var(--bios-dim);
+    --accent: var(--bios-red);
+    --text-primary: var(--bios-text);
+    --text-secondary: var(--bios-dim);
+    --text-muted: var(--bios-dim);
+    --border-color: var(--bios-line);
+    --panel-background: var(--bios-panel);
+}
+
+body {
+    font-family: "Rajdhani", "Barlow Semi Condensed", "Segoe UI", "Ubuntu Condensed", system-ui, sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.018) 0 2px, transparent 2px 6px),
+        radial-gradient(1200px 500px at 85% -10%, rgba(230,0,18,0.14), transparent 60%),
+        var(--bios-black);
+    background-attachment: fixed;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    background: linear-gradient(180deg, #0e0e11, #0a0a0c);
+    border-right: 1px solid var(--bios-line);
+    box-shadow: inset -3px 0 0 rgba(230,0,18,0.55);
+}
+
+.brand-mark {
+    border-radius: 0;
+    background: var(--bios-red);
+    color: #fff;
+    font-weight: 700;
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+    box-shadow: none;
+    border: 0;
+}
+
+.brand-copy strong { font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.brand-copy small  { color: var(--bios-dim); }
+
+.sidebar-label {
+    color: var(--bios-red-hot);
+    letter-spacing: 0.22em;
+    font-weight: 700;
+}
+
+.nav-item {
+    border-radius: 0;
+    border: 0;
+    border-left: 3px solid transparent;
+    padding: 13px 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+.nav-item:hover {
+    background: rgba(255,255,255,0.05);
+    border-left-color: #55555d;
+}
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(230,0,18,0.30), rgba(230,0,18,0.04));
+    border-left-color: var(--bios-red-hot);
+    color: #fff;
+}
+.nav-item.active .nav-icon { color: var(--bios-red-hot); }
+
+/* ---------- Top bar ---------- */
+.topbar {
+    background: #0c0c0f;
+    border-bottom: 1px solid var(--bios-line);
+    position: relative;
+}
+.topbar::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -1px;
+    width: 220px; height: 2px;
+    background: var(--bios-red);
+}
+.eyebrow { color: var(--bios-red-hot); letter-spacing: 0.22em; font-weight: 700; }
+.topbar h1, .topbar-heading h1 {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+}
+.icon-button {
+    border-radius: 0;
+    background: var(--bios-panel-2);
+    border: 1px solid var(--bios-line);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+.icon-button:hover { border-color: var(--bios-red); }
+.live-indicator, #status-indicator.connected {
+    background: var(--bios-red-hot);
+    box-shadow: 0 0 8px var(--bios-red-hot);
+}
+
+/* ---------- Section headings ---------- */
+.welcome-row h2, .section-heading h2 {
+    color: var(--bios-text);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    padding-left: 12px;
+    border-left: 4px solid var(--bios-red);
+}
+.secondary, .update-label, .page-description { color: var(--bios-dim); }
+
+/* ---------- Panels ---------- */
+.card,
+.telemetry-chart-panel,
+.history-card,
+.per-core-card {
+    position: relative;
+    background: linear-gradient(180deg, var(--bios-panel-2) 0%, var(--bios-panel) 40%);
+    border: 1px solid var(--bios-line);
+    border-top: 2px solid #3a3a42;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+    transition: border-color 0.15s ease;
+}
+.card:hover,
+.telemetry-chart-panel:hover {
+    border-color: #4a4a54;
+    border-top-color: var(--bios-red);
+    transform: none;
+}
+/* red tick in the cut corner */
+.card::after,
+.telemetry-chart-panel::after {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: var(--cut); height: var(--cut);
+    background: linear-gradient(225deg, var(--bios-red) 0 50%, transparent 50%);
+    pointer-events: none;
+}
+
+.card-heading h3,
+.telemetry-chart-heading h3 {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--bios-dim);
+}
+.card-icon {
+    border-radius: 0;
+    background: transparent;
+    border: 1px solid var(--bios-red);
+    color: var(--bios-red-hot);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-right: 16px; /* clear the corner tick */
+}
+
+/* ---------- Numbers ---------- */
+.metric-value, .network-value, .compact-value, .donut-center strong {
+    font-family: "Rajdhani", "Barlow Semi Condensed", "Ubuntu Condensed", sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+    color: #fff;
+    text-shadow: 0 0 18px rgba(230,0,18,0.35);
+}
+.metric-value span, .network-value span { color: var(--bios-dim); text-shadow: none; }
+
+/* ---------- Segmented progress bars ---------- */
+.progress-track,
+.core-progress-track,
+.core-meter-track,
+.disk-progress-track {
+    height: 10px;
+    border-radius: 0;
+    background:
+        repeating-linear-gradient(90deg, #26262b 0 6px, transparent 6px 8px);
+}
+.progress-bar,
+.core-progress-bar,
+.core-meter-fill,
+.disk-progress-bar {
+    border-radius: 0;
+    background: linear-gradient(90deg, #8f000b, var(--bios-red-hot));
+    -webkit-mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 8px);
+            mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 8px);
+    box-shadow: none;
+}
+
+.core-tile, .core-meter-label, .core-frequency { color: var(--bios-dim); }
+.core-tile {
+    background: #0e0e11;
+    border: 1px solid var(--bios-line);
+    border-radius: 0;
+}
+
+/* ---------- Status chips / text ---------- */
+.disk-heading, .system-row { border-color: var(--bios-line); }
+.legend-label { color: var(--bios-dim); }
+.used-dot { background: var(--bios-red-hot); border-radius: 0; }
+.available-dot { background: #3a3a42; border-radius: 0; }
+
+/* ---------- Scrollbar + focus ---------- */
+:focus-visible { outline: 2px solid var(--bios-red-hot); outline-offset: 2px; }
+* { scrollbar-color: #3a3a42 #0a0a0c; scrollbar-width: thin; }
+
+footer, .app-footer { color: #55555d; border-top: 1px solid var(--bios-line); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.75rem; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}

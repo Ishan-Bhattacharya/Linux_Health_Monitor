@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#08080a">
+    <title>Linux Health Monitor</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/bios-theme.css">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <script src="/static/vendor/chart.umd.min.js"></script>
+    <script src="/static/dashboard.js" defer></script>
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <a href="#" class="brand" data-view-link="overview">
+                <span class="brand-mark">LH</span>
+                <span class="brand-copy">
+                    <strong>Linux Health</strong>
+                    <small>Monitor</small>
+                </span>
+            </a>
+
+            <div class="sidebar-label">MONITORING</div>
+
+            <nav class="navigation" aria-label="Main navigation">
+                <button class="nav-item active"
+                        data-view-link="overview"
+                        aria-current="page">
+                    <span class="nav-icon">◫</span>
+                    <span>Overview</span>
+                </button>
+
+                <button class="nav-item" data-view-link="cpu">
+                    <span class="nav-icon">▥</span>
+                    <span>CPU</span>
+                </button>
+
+                <button class="nav-item" data-view-link="memory">
+                    <span class="nav-icon">▤</span>
+                    <span>Memory</span>
+                </button>
+
+                <button class="nav-item" data-view-link="storage">
+                    <span class="nav-icon">▣</span>
+                    <span>Storage</span>
+                </button>
+
+                <button class="nav-item" data-view-link="network">
+                    <span class="nav-icon">⇄</span>
+                    <span>Network</span>
+                </button>
+
+                <button class="nav-item" data-view-link="gpu">
+                    <span class="nav-icon">▦</span>
+                    <span>GPU</span>
+                </button>
+
+                <button class="nav-item" data-view-link="system">
+                    <span class="nav-icon">⌘</span>
+                    <span>System</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="connection">
+                    <span id="status-indicator" class="online"></span>
+                    <span id="status">Connecting</span>
+                </div>
+
+                <p class="sidebar-host" id="sidebar-hostname">global-rex</p>
+                <small>Linux Health Monitor</small>
+            </div>
+        </aside>
+
+        <!-- Main application -->
+        <div class="main-shell">
+
+            <header class="topbar">
+                <div class="topbar-heading">
+                    <button id="sidebar-toggle"
+                            class="icon-button"
+                            type="button"
+                            aria-label="Toggle sidebar"
+                            aria-expanded="true">
+                        ☰
+                    </button>
+
+                    <div>
+                        <p class="eyebrow">SYSTEM MONITOR</p>
+                        <h1 id="page-title">Overview</h1>
+                        <p id="page-description" class="page-description">
+                            Your system at a glance.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="topbar-meta">
+                    <span class="live-indicator"></span>
+                    <span>Live monitoring</span>
+                </div>
+            </header>
+
+            <main class="dashboard-content">
+
+                <!-- Overview -->
+                <section class="view-panel active"
+                         data-view="overview"
+                         aria-label="System overview">
+
+                    <div class="welcome-row">
+                        <div>
+                            <h2>System overview</h2>
+                            <p class="secondary">
+                                Live performance and resource utilization.
+                            </p>
+                        </div>
+
+                        <div class="update-label">
+                            Updated <span id="last-updated">Never</span>
+                        </div>
+                    </div>
+
+                    <section class="metrics-grid">
+
+                        <article class="card metric-card"
+                                 data-section="cpu">
+                            <div class="card-heading">
+                                <h3>CPU Usage</h3>
+                                <span class="card-icon">CPU</span>
+                            </div>
+
+                            <p class="metric-value">
+                                <span id="cpu-usage">--</span><small>%</small>
+                            </p>
+
+                            <p id="cpu-cores" class="secondary">
+                                Logical cores: --
+                            </p>
+                        </article>
+
+                       <article class="card metric-card memory-card"
+         data-section="memory">
+
+				    <div class="card-heading">
+				        <h3>Memory Usage</h3>
+				        <span class="card-icon">RAM</span>
+				    </div>
+
+				    <div class="memory-chart-layout">
+				        <div class="donut-chart-wrap">
+				            <canvas id="memory-donut-chart"
+				                    aria-label="Memory usage donut chart"></canvas>
+
+				            <div class="donut-center">
+				                <strong id="memory-donut-percent">--%</strong>
+				                <span>Used RAM</span>
+				            </div>
+				        </div>
+
+				        <div class="donut-legend">
+				            <div class="legend-item">
+				                <span class="legend-dot used-dot"></span>
+				                <div>
+				                    <span class="legend-label">Used</span>
+				                    <strong id="memory-used-amount">--</strong>
+				                </div>
+				            </div>
+
+				            <div class="legend-item">
+				                <span class="legend-dot available-dot"></span>
+				                <div>
+				                    <span class="legend-label">Available</span>
+				                    <strong id="memory-available-amount">--</strong>
+				                </div>
+				            </div>
+       					 </div>
+   				 </div>
+
+   				 <p id="memory-usage" class="hidden-metric">--</p>
+   				 <p id="memory-details" class="secondary">Waiting for memory data...</p>
+
+				    <div class="progress-track">
+				        <div id="memory-bar" class="progress-bar"></div>
+				    </div>
+			</article>
+                        <article class="card metric-card"
+                                 data-section="storage">
+                            <div class="card-heading">
+                                <h3>Disk Usage</h3>
+                                <span class="card-icon">SSD</span>
+                            </div>
+
+                            <div id="disk-details">
+                                Waiting for data...
+                            </div>
+                        </article>
+
+                        <article class="card metric-card"
+                                 data-section="network">
+                            <div class="card-heading">
+                                <h3>Network</h3>
+                                <span class="card-icon">NET</span>
+                            </div>
+
+                            <p class="secondary">Download</p>
+                            <p class="metric-value network-value">
+                                <span id="download-speed">--</span>
+                                <small>KB/s</small>
+                            </p>
+
+                            <p class="secondary">Upload</p>
+                            <p class="metric-value network-value">
+                                <span id="upload-speed">--</span>
+                                <small>KB/s</small>
+                            </p>
+                        </article>
+
+                        <article class="card metric-card"
+                                 data-section="gpu">
+                            <div class="card-heading">
+                                <h3>GPU</h3>
+                                <span class="card-icon">GPU</span>
+                            </div>
+
+                            <p id="gpu-status">Detecting GPU...</p>
+                            <div id="gpu-details"></div>
+                        </article>
+
+                        <article class="card metric-card"
+                                 data-section="system">
+                            <div class="card-heading">
+                                <h3>System Information</h3>
+                                <span class="card-icon">SYS</span>
+                            </div>
+
+                            <p id="hostname" class="secondary">Detecting system...</p>
+                            <div id="system-details">Waiting for data...</div>
+                        </article>
+
+                    </section>
+                </section>
+
+                <!-- CPU view -->
+                <section class="view-panel"
+                         data-view="cpu"
+                         aria-label="CPU monitoring">
+
+                    <div class="section-intro">
+                        <h2>Processor performance</h2>
+                        <p class="secondary">
+                            Aggregate utilization, recent history, and
+                            individual logical CPU activity.
+                        </p>
+                    </div>
+
+                    <div class="focus-metric-row">
+                        <article class="card focus-metric-card">
+                            <p class="secondary">Total CPU utilization</p>
+                            <p class="metric-value">
+                                <span id="cpu-focus-value">--</span><small>%</small>
+                            </p>
+                        </article>
+
+                        <article class="card focus-metric-card">
+                            <p class="secondary">Logical CPUs</p>
+                            <p class="metric-value" id="cpu-focus-cores">--</p>
+                        </article>
+
+                        <article class="card focus-metric-card">
+                            <p class="metric-value compact-value"
+                               id="cpu-focus-load">--</p>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Memory view -->
+<section class="view-panel"
+         data-view="memory"
+         aria-label="Memory monitoring">
+
+    <div class="section-intro">
+        <h2>Memory resources</h2>
+        <p class="secondary">
+            Physical memory, available capacity, and swap utilization.
+        </p>
+    </div>
+
+    <div class="focus-metric-row memory-focus-grid">
+
+        <article class="card focus-metric-card">
+            <p class="secondary">RAM utilization</p>
+
+            <div class="focus-donut-layout">
+                <div class="donut-chart-wrap focus-donut-wrap">
+                    <canvas id="memory-focus-donut"
+                            aria-label="Detailed RAM usage chart"></canvas>
+
+                    <div class="donut-center">
+                        <strong id="memory-focus-percent">--%</strong>
+                        <span>Used RAM</span>
+                    </div>
+                </div>
+
+                <div class="donut-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot used-dot"></span>
+                        <div>
+                            <span class="legend-label">Used</span>
+                            <strong id="memory-focus-used">--</strong>
+                        </div>
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-dot available-dot"></span>
+                        <div>
+                            <span class="legend-label">Available</span>
+                            <strong id="memory-focus-available">--</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-track">
+                <div id="memory-focus-bar" class="progress-bar"></div>
+            </div>
+        </article>
+
+        <article class="card focus-metric-card">
+            <p class="secondary">Memory details</p>
+            <div id="memory-focus-details">Waiting for data...</div>
+        </article>
+
+        <article class="card focus-metric-card">
+            <p class="secondary">Swap utilization</p>
+
+            <div class="focus-donut-layout">
+                <div class="donut-chart-wrap focus-donut-wrap">
+                    <canvas id="swap-donut-chart"
+                            aria-label="Swap usage donut chart"></canvas>
+
+                    <div class="donut-center">
+                        <strong id="swap-donut-percent">--%</strong>
+                        <span>Used swap</span>
+                    </div>
+                </div>
+
+                <div class="donut-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot used-dot"></span>
+                        <div>
+                            <span class="legend-label">Used</span>
+                            <strong id="swap-used-amount">--</strong>
+                        </div>
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-dot available-dot"></span>
+                        <div>
+                            <span class="legend-label">Free</span>
+                            <strong id="swap-available-amount">--</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p id="swap-details" class="secondary">
+                Waiting for swap data...
+            </p>
+        </article>
+
+    </div>
+</section>
+                <!-- Storage view -->
+                <section class="view-panel"
+                         data-view="storage"
+                         aria-label="Storage monitoring">
+
+                    <div class="section-intro">
+                        <h2>Storage and filesystems</h2>
+                        <p class="secondary">
+                            Mounted filesystems, used space, and available capacity.
+                        </p>
+                    </div>
+
+                    <article class="card detail-card">
+                        <h3>Mounted filesystems</h3>
+                        <div id="storage-focus-details">
+                            Waiting for data...
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Network view -->
+                <section class="view-panel"
+                         data-view="network"
+                         aria-label="Network monitoring">
+
+                    <div class="section-intro">
+                        <h2>Network activity</h2>
+                        <p class="secondary">
+                            Current receive and transmit throughput.
+                        </p>
+                    </div>
+
+                    <div class="focus-metric-row">
+                        <article class="card focus-metric-card">
+                            <p class="secondary">Download throughput</p>
+                            <p class="metric-value">
+                                <span id="download-focus-value">--</span>
+                                <small>KB/s</small>
+                            </p>
+                        </article>
+
+                        <article class="card focus-metric-card">
+                            <p class="secondary">Upload throughput</p>
+                            <p class="metric-value">
+                                <span id="upload-focus-value">--</span>
+                                <small>KB/s</small>
+                            </p>
+                        </article>
+                    </div>
+
+                    <article class="card detail-card">
+                        <h3>Interface information</h3>
+                        <p id="network-focus-details" class="secondary">
+                            Waiting for network data...
+                        </p>
+                    </article>
+                </section>
+
+                <!-- GPU view -->
+                <section class="view-panel"
+                         data-view="gpu"
+                         aria-label="GPU monitoring">
+
+                    <div class="section-intro">
+                        <h2>Graphics processor</h2>
+                        <p class="secondary">
+                            GPU utilization and graphics memory telemetry.
+                        </p>
+                    </div>
+
+                    <article class="card detail-card">
+                        <h3>GPU telemetry</h3>
+                        <p id="gpu-focus-status">Waiting for GPU data...</p>
+                        <div id="gpu-focus-details"></div>
+                    </article>
+                </section>
+
+                <!-- System view -->
+                <section class="view-panel"
+                         data-view="system"
+                         aria-label="System information">
+
+                    <div class="section-intro">
+                        <h2>System diagnostics</h2>
+                        <p class="secondary">
+                            Operating system, kernel, uptime, and hardware details.
+                        </p>
+                    </div>
+
+                    <article class="card detail-card">
+                        <h3>System details</h3>
+                        <div id="system-focus-details">
+                            Waiting for system data...
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Shared live charts and per-core grid.
+                     These are moved between views by JavaScript. -->
+                <section class="card history-card movable-panel"
+                         id="cpu-history-panel"
+                         data-home-view="overview">
+
+                    <div class="card-heading">
+                        <div>
+                            <h2>CPU History</h2>
+                            <p class="secondary">Recent processor utilization</p>
+                        </div>
+                    </div>
+
+                    <div class="telemetry-chart-container">
+                        <canvas id="cpu-history-chart"></canvas>
+                    </div>
+                </section>
+
+                <section class="card per-core-card movable-panel"
+                         id="per-core-panel"
+                         data-home-view="overview">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Per-Core CPU Usage</h2>
+                            <p class="secondary">
+                                Live utilization and current frequency
+                            </p>
+                        </div>
+
+                        <span id="core-count" class="secondary">
+                            -- logical CPUs
+                        </span>
+                    </div>
+
+                    <div id="per-core-grid" class="per-core-grid">
+                        <p class="secondary">Waiting for CPU data...</p>
+                    </div>
+                </section>
+
+                <footer class="app-footer">
+                    <span>Linux Health Monitor</span>
+                    <span>Local system telemetry</span>
+                </footer>
+
+            </main>
+        </div>
+    </div>
+</body>
